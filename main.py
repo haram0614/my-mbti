@@ -94,3 +94,85 @@ st.caption("16가지 유형 중 하나를 선택하세요. 선택하면 노란�
 
 cols = st.columns(4)
 for i, mbti in enumerate(ORDER):
+    with cols[i % 4]:
+        if st.button(
+            ("⭐ " if st.session_state.selected_mbti == mbti else "") + mbti,
+            key=f"mbti_{mbti}",
+            use_container_width=True,
+            type="primary" if st.session_state.selected_mbti == mbti else "secondary",
+        ):
+            st.session_state.selected_mbti = mbti
+            st.session_state.show_result = False
+            st.rerun()
+
+left, right = st.columns([3, 2])
+with left:
+    if st.button("✨ 나의 단짝 포켓몬 찾기!", type="primary", use_container_width=True):
+        st.session_state.show_result = True
+with right:
+    if st.button("🔄 다시 고르기", use_container_width=True):
+        st.session_state.selected_mbti = "ENFP"
+        st.session_state.show_result = False
+        st.rerun()
+
+if st.session_state.show_result:
+    mbti = st.session_state.selected_mbti
+    p = POKEMON[mbti]
+    st.balloons()
+    st.snow()
+    st.markdown("---")
+    st.markdown(f"## 🎉 축하해! {mbti}의 단짝 포켓몬을 찾았어!")
+    st.caption("두근두근… 운명의 파트너 공개!")
+
+    image_url = f"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/{p['id']}.png"
+    c1, c2 = st.columns([1, 1.4], gap="large")
+    with c1:
+        st.image(image_url, caption=f"{p['ko']} ({p['en']})", use_container_width=True)
+    with c2:
+        st.markdown(f"### 💛 {p['ko']} ({p['en']})")
+        st.markdown(f"**타입:** {p['type']}")
+        st.markdown(f"**특징:** {p['trait']}")
+        st.markdown("**너와 어울리는 이유**")
+        st.write(p["why"])
+
+    st.markdown("### 🤝 단짝 궁합")
+    a, b = st.columns(2)
+    with a:
+        st.markdown(f"""
+        <div class="info-card">
+        <div>🌟 <b>잘 맞을 수 있는 유형</b></div>
+        <h3>{p['good']}</h3>
+        서로의 장점을 보완하고 함께 성장할 수 있는 조합으로 골랐어요.
+        </div>
+        """, unsafe_allow_html=True)
+    with b:
+        st.markdown(f"""
+        <div class="info-card">
+        <div>🌈 <b>새로운 관점을 주는 유형</b></div>
+        <h3>{p['other']}</h3>
+        다른 생각을 나누면서 새로운 아이디어를 얻을 수 있어요.
+        </div>
+        """, unsafe_allow_html=True)
+
+    st.info("참고: 포켓몬 매칭과 MBTI 궁합은 재미를 위한 창작 콘텐츠이며, 공식 진단이나 과학적 판정이 아닙니다.")
+    st.markdown("""
+    <div style="text-align:center;background:#fff0a5;border-radius:18px;padding:1rem;margin-top:1rem;">
+      <span style="font-size:1.5rem;">🌟 🎊 💛 🎊 🌟</span><br>
+      <b>새로운 단짝과 즐거운 모험을 시작해 봐!</b>
+    </div>
+    """, unsafe_allow_html=True)
+else:
+    st.markdown("""
+    <div class="info-card" style="text-align:center;margin-top:1rem;">
+      <div style="font-size:2.3rem;">🎁</div>
+      <b>아직 단짝 포켓몬이 비밀에 싸여 있어!</b><br>
+      아래 버튼을 누르면 축하 효과와 함께 결과가 공개돼.
+    </div>
+    """, unsafe_allow_html=True)
+
+st.markdown("""
+<p style="text-align:center;color:#756d60;font-size:.8rem;margin-top:2rem;">
+  포켓몬 이미지 출처: PokeAPI 공식 아트워크 저장소 · 이미지를 표시하려면 인터넷 연결이 필요합니다.<br>
+  MBTI는 재미로 즐기는 성격 유형 콘텐츠입니다. 💛
+</p>
+""", unsafe_allow_html=True)
